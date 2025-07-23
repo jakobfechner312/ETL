@@ -1,0 +1,5 @@
+*
+!.gitignore
+!adaptive/
+!static_pipeline/
+adaptive/.env
