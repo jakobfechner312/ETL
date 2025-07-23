@@ -1,5 +1,17 @@
+# ------------------------------------------------
+# Alles ignorieren …
 *
+# … ausser den Projekten
 !.gitignore
+
+# adaptive komplett zulassen
 !adaptive/
-!static_pipeline/
+!adaptive/**
+
+# aber die .env trotzdem nicht
 adaptive/.env
+
+# static_pipeline komplett zulassen
+!static_pipeline/
+!static_pipeline/**
+# ------------------------------------------------

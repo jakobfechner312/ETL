@@ -1,0 +1,26 @@
+{
+  "rating_imdb_data": {
+    "min": 1.7,
+    "max": 9.3,
+    "median": 6.8,
+    "count": 2978
+  },
+  "rating_metacritic_movies": {
+    "min": 0.0,
+    "max": 10.0,
+    "median": 6.9,
+    "count": 7689
+  },
+  "rating_movielens_aggregated": {
+    "min": 0.5,
+    "max": 5.0,
+    "median": 3.3,
+    "count": 7145
+  },
+  "rating_rotten_tomatoes_movies": {
+    "min": 0.0,
+    "max": 100.0,
+    "median": 65.0,
+    "count": 9928
+  }
+}

@@ -1,0 +1,32 @@
+logging:
+  level: INFO
+
+sources:
+  ImdbAdapter:
+    file_path: '../static_pipeline/data/raw/imdb_data.csv'
+  MetacriticAdapter:
+    file_path: '../static_pipeline/data/raw/metacritic_movies.csv'
+  MovielensAdapter:
+    movies_path: '../static_pipeline/data/raw/movies.csv'
+    ratings_path: '../static_pipeline/data/raw/ratings.csv'
+  RottenTomatoesAdapter:
+    file_path: '../static_pipeline/data/raw/rotten_tomatoes_movies.csv'
+
+processing:
+  min_ratings_for_superscore: 2
+
+  apply_outlier_treatment: false
+
+  outlier_treatment:
+    method: 'cap'
+    iqr_faktor: 1.5
+    lower_percentile: 0.05
+    upper_percentile: 0.95
+    
+output:
+  csv_path: '../static_pipeline/data/processed/test_merge_result.csv'
+
+  analysis: # NEUER ABSCHNITT für Rating-Analysen
+    analysis_report_path: "data/analysis_reports/comprehensive_movie_merge_report.txt"
+    raw_ratings_output_dir: "data/analysis_reports/01_raw_movie_data_insights"
+    final_ratings_output_dir: "data/analysis_reports/02_processed_movie_data_insights"

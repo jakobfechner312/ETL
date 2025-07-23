@@ -1,0 +1,7 @@
+,mean,std,min,max,median,count
+IMDB (Norm 0-10),6.72,0.88,1.7,9.3,6.7,2708.0
+MovieLens (Norm 0-10),6.31,1.59,1.0,10.0,6.5,4821.0
+Metacritic (Norm 0-10),5.66,1.78,0.8,10.0,5.7,7046.0
+RottenTomatoes (Norm 0-10),6.15,1.99,0.7,10.0,6.3,8449.0
+Superscore Mean (0-10),6.05,1.59,1.0,9.75,6.15,8774.0
+Superscore Median (0-10),6.07,1.61,1.0,9.75,6.25,8774.0
