@@ -1,52 +1,29 @@
-"""
-Fuzzy-Merge mehrerer Bewertungs-Quellen.
-
-• Aggressive Titel-Normalisierung
-• ±1-Jahr-Clustering
-• Long → Wide-Pivot
-• Genres: erste nicht-leere Liste pro Film (ohne weitere Aufbereitung)
-• Behalten nur Filme mit ≥ 2 vorhandenen Ratings
-"""
-
 from __future__ import annotations
 
-import ast
+import json
 import re
-from typing import List
 from pathlib import Path
+from typing import List
 
+import numpy as np
 import pandas as pd
+from transform.normalize import normalize_film_title
 
-# Akzente → ASCII; Fallback, falls Paket nicht installiert
+# Fallback für unidecode
 try:
     from unidecode import unidecode
 except ImportError:  # pragma: no cover
     unidecode = lambda s: s  # type: ignore
 
+# Pfade wie bei dir
+UNFILTERED_OUT = Path("static_pipeline/data/processed/all_movies_wide_unfiltered.csv")
+DUPLICATES_OUT = Path("static_pipeline/data/processed/all_movies_fuzzy_duplicates.csv")
 
-# ───────────────────────── Hilfsfunktionen ──────────────────────────
 def norm_title(title: str) -> str:
-    """Titel in robuste, vergleichbare Form bringen."""
-    if not isinstance(title, str):
-        return ""
-    t = unidecode(title).lower()
-    t = re.sub(r"\s*\(\d{4}\)$", "", t)           # (YYYY) am Ende
-    t = re.sub(r"\s*\([^)]*\)$", "", t)           # sonstige Klammern
-    t = re.sub(r"[^\w\s]", " ", t)                # Satzzeichen → Leerzeichen
-    t = re.sub(r"\bthe\s*$", "", t)               # trailing "the"
-    t = re.sub(r"\s+", " ", t).strip()
-
-    # doppelte Tokens entfernen
-    seen, tokens = set(), []
-    for tok in t.split():
-        if tok not in seen:
-            tokens.append(tok)
-            seen.add(tok)
-    return " ".join(tokens)
-
+    # exakt dieselbe Normalisierung wie in deinen Adaptern
+    return normalize_film_title(title) if isinstance(title, str) else ""
 
 def _cluster_years(unique_years: list[int]) -> dict[int, int]:
-    """Weist Jahren Cluster-IDs zu, wenn sie maximal ±1 Jahr auseinanderliegen."""
     clusters: list[list[int]] = []
     mapping: dict[int, int] = {}
     for y in sorted(unique_years):
@@ -62,97 +39,138 @@ def _cluster_years(unique_years: list[int]) -> dict[int, int]:
             mapping[y] = len(clusters) - 1
     return mapping
 
-
 def year_cluster(series: pd.Series) -> pd.Series:
-    """Series → Cluster-ID je Jahr."""
     years = [int(y) for y in series.dropna()]
     mapping = _cluster_years(years)
     next_id = (max(mapping.values()) + 1) if mapping else 0
     return series.map(mapping).fillna(next_id).astype(int)
 
-
 def _first(series: pd.Series):
-    """Gibt das erste Element zurück, das keine leere Liste / NA ist."""
     for val in series:
-        if isinstance(val, list) and val:   # echte nicht-leere Liste
+        if isinstance(val, list) and val:
             return val
         if isinstance(val, str) and val.strip():
             return val
     return []
 
+def _first_valid(series: pd.Series):
+    s = series.dropna()
+    return s.iloc[0] if not s.empty else pd.NA
 
-# ───────────────────────── Hauptfunktion ────────────────────────────
 def merge_sources(dfs: List[pd.DataFrame]) -> pd.DataFrame:
     """
-    Führt DataFrames aus verschiedenen Quellen in ein gemeinsames Wide-Format
-    zusammen, toleriert Titel- und Jahresabweichungen.
+    Statischer Merge mit:
+      • Titel-Normalisierung (zentral)
+      • ±1-Jahr-Cluster pro norm_title
+      • Long→Wide Aggregation
+      • Genres: erste nicht-leere Liste
+      • Filter: nur Filme mit ≥2 vorhandenen Ratings
+    Rückgabe: EIN DataFrame (wie zuvor), damit main_pipeline.py NICHT bricht.
+    Duplikate werden zusätzlich als CSV persistiert (Nebenwirkung), aber NICHT zurückgegeben.
     """
     if not dfs:
         return pd.DataFrame()
 
-    # 1) Long-Format aufbauen -------------------------------------------------
     frames: list[pd.DataFrame] = []
     for df in dfs:
-        # passende Rating-Spalte identifizieren
+        if df is None or df.empty:
+            continue
+
+        tmp = df.copy()
+
+        # Rating-Spalte identifizieren (deine Heuristik)
         rating_col, source = None, None
-        for col in df.columns:
+        for col in tmp.columns:
             if col.startswith("rating_"):
                 rating_col = col
                 source = col.replace("rating_", "")
                 break
-            if col == "tomatometer_rating":           # Fallback (ältere RT-Spalte)
+            if col == "tomatometer_rating":
                 rating_col, source = col, "rt_audience"
                 break
-
-        if rating_col is None:                       # Quelle ohne Rating
+        if rating_col is None:
             continue
 
-        tmp = df.copy()
-        tmp["rating"] = pd.to_numeric(tmp[rating_col], errors="coerce")
         tmp["source"] = source
 
-        # Genres unverändert übernehmen (erste Spalte, die mit "genres" beginnt)
+        # Genres übernehmen (erste "genres*"-Spalte, sonst leere Liste)
         genre_col = next((c for c in tmp.columns if c.startswith("genres")), None)
         tmp["genres"] = tmp[genre_col] if genre_col else [[]] * len(tmp)
 
-        # Release-Date sicherstellen
+        # release_date absichern
         if "release_date" not in tmp.columns:
             tmp["release_date"] = pd.NaT
 
-        frames.append(
-            tmp[["title", "year", "release_date", "genres", "rating", "source"]]
-        )
+        # ID-Spalten (ID_*) mitführen
+        id_cols = [c for c in tmp.columns if str(c).startswith("ID_")]
+
+        cols_to_keep = ["title", "year", "release_date", "genres", "source", rating_col] + id_cols
+        frames.append(tmp[cols_to_keep])
 
     if not frames:
         return pd.DataFrame()
 
     long_df = pd.concat(frames, ignore_index=True)
 
-    # 2) Titel normalisieren + Jahr-Cluster ----------------------------------
+    # Titel normalisieren + release_year sauber typisieren
     long_df["norm_title"] = long_df["title"].apply(norm_title)
-    long_df["release_year"] = pd.to_numeric(long_df["year"], errors="coerce").astype(
-        "Int64"
-    )
+    long_df["release_year"] = pd.to_numeric(long_df["year"], errors="coerce").astype("Int64")
+
+    # Optional: film_sig-Kanalisierung (IDs bündeln) – identisch wie bei dir
+    id_cols_sig = [c for c in long_df.columns if str(c).startswith("ID_")]
+    if id_cols_sig:
+        def _build_film_sig(row: pd.Series) -> str:
+            parts = []
+            for c in id_cols_sig:
+                v = row.get(c, pd.NA)
+                if pd.notna(v):
+                    parts.append(f"{c}={str(v)}")
+            if not parts:
+                return ""
+            parts.sort()
+            return "|".join(parts)
+
+        long_df["film_sig"] = long_df.apply(_build_film_sig, axis=1)
+
+        def _unify_group(g: pd.DataFrame) -> pd.DataFrame:
+            # nur echte Signaturen mit >=2 Zeilen vereinheitlichen
+            if not isinstance(g.name, str) or g.name == "" or len(g) < 2:
+                return g
+            counts = g["norm_title"].value_counts(dropna=False)
+            max_count = counts.max()
+            candidates = counts[counts == max_count].index.tolist()
+            best_title = max(candidates, key=lambda s: len(s) if isinstance(s, str) else 0)
+            min_year = pd.to_numeric(g["release_year"], errors="coerce").min()
+            g = g.copy()
+            g["norm_title"] = best_title
+            g["release_year"] = pd.Series([min_year] * len(g), index=g.index).astype("Int64")
+            return g
+
+        # FutureWarning vermeiden: include_groups=False (wo verfügbar)
+        try:
+            long_df = long_df.groupby("film_sig", group_keys=False, include_groups=False).apply(_unify_group)
+        except TypeError:
+            long_df = long_df.groupby("film_sig", group_keys=False).apply(_unify_group)
+
+    # Year-Cluster pro norm_title
     long_df["year_cluster"] = (
-        long_df.groupby("norm_title", group_keys=False)["release_year"]
-               .apply(year_cluster)
+        long_df.groupby("norm_title", group_keys=False)["release_year"].apply(year_cluster)
     )
 
-    # 3) Pivot (Long → Wide) --------------------------------------------------
-    ratings_wide = (
-        long_df.pivot_table(
-            index=["norm_title", "year_cluster"],
-            columns="source",
-            values="rating",
-            aggfunc="first",
+    # Ratings aggregieren (first_valid)
+    group_cols = ["norm_title", "year_cluster"]
+    rating_cols_present = [c for c in long_df.columns if str(c).startswith("rating_")]
+    if rating_cols_present:
+        ratings_wide = (
+            long_df.groupby(group_cols, as_index=False)[rating_cols_present].agg(_first_valid)
         )
-        .reset_index()
-    )
+    else:
+        ratings_wide = long_df[group_cols].drop_duplicates()
 
-    # 4) Meta-Infos (Titel, Jahr, Release-Date) ------------------------------
+    # Meta (Titel, min Jahr, min release_date)
     meta = (
         long_df.sort_values(["source", "title"])
-               .groupby(["norm_title", "year_cluster"])
+               .groupby(group_cols)
                .agg(
                    title=("title", "first"),
                    year=("release_year", "min"),
@@ -160,69 +178,68 @@ def merge_sources(dfs: List[pd.DataFrame]) -> pd.DataFrame:
                )
                .reset_index()
     )
-    wide = ratings_wide.merge(meta, on=["norm_title", "year_cluster"], how="left")
+    wide = ratings_wide.merge(meta, on=group_cols, how="left")
 
-    # 5) Genres: erste nicht-leere Liste (Notebook-Logik) ---------------------
+    # Genres: erste nicht-leere Liste
     genres_map = (
         long_df.sort_values("source")
-               .groupby(["norm_title", "year_cluster"])["genres"]
+               .groupby(group_cols)["genres"]
                .apply(_first)
                .reset_index()
     )
-    wide = wide.merge(genres_map, on=["norm_title", "year_cluster"], how="left")
+    wide = wide.merge(genres_map, on=group_cols, how="left")
 
-    # 6) Rating-Spalten umbenennen wie von der Pipeline erwartet -------------
-    rename_map = {
-        "imdb":        "rating_imdb",
-        "movielens":   "rating_movielens",
-        "metacritic":  "rating_metacritic",
-        "rt_audience": "rating_rt_audience",
-    }
-    wide = wide.rename(columns=rename_map)
+    # IDs je Film (erste gültige je Quelle)
+    id_cols_in_long = [c for c in long_df.columns if str(c).startswith("ID_")]
+    if id_cols_in_long:
+        ids_map = (
+            long_df.groupby(group_cols, as_index=False)[id_cols_in_long].agg(_first_valid)
+        )
+        wide = wide.merge(ids_map, on=group_cols, how="left")
 
-    rating_cols = [
-        "rating_imdb",
-        "rating_movielens",
-        "rating_metacritic",
-        "rating_rt_audience",
-    ]
-    for col in rating_cols:                           # fehlende Spalten anlegen
+    # Erwartete Rating-Spalten sicherstellen
+    for col in ["rating_imdb","rating_movielens","rating_metacritic","rating_rt_audience"]:
         if col not in wide.columns:
             wide[col] = pd.NA
-    # --- Zwischenspeichern: Wide-Frame vor ≥2-Ratings-Filter -----------
-    UNFILTERED_OUT = Path("static_pipeline/data/processed/all_movies_wide_unfiltered.csv")
+
+    # Unfiltered-Snapshot schreiben (wie bisher)
     UNFILTERED_OUT.parent.mkdir(parents=True, exist_ok=True)
     wide.to_csv(UNFILTERED_OUT, index=False)
     print(f"💾 Ungefiltertes Wide-Ergebnis gespeichert: {UNFILTERED_OUT}")
-    
-    # 7) Anzahl verfügbarer Ratings + Filter ---------------------------------
-    wide["count_ratings"] = wide[rating_cols].notna().sum(axis=1)
+
+    # Count ratings & Filter k ≥ 2
+    wide["count_ratings"] = wide[["rating_imdb","rating_movielens","rating_metacritic","rating_rt_audience"]].notna().sum(axis=1)
     df_final = wide[wide["count_ratings"] >= 2].copy()
 
-    # 8) Sortierung -----------------------------------------------------------
-    df_final = (
-        df_final.sort_values(["count_ratings", "year"], ascending=[False, False])
-                .reset_index(drop=True)
-    )
+    # Sortierung (deine Logik)
+    df_final = df_final.sort_values(["count_ratings", "year"], ascending=[False, False]).reset_index(drop=True)
 
-    # 9) Harmonisierung der Zeitspalten --------------------------------------
-    #   – 'year'   → 'release_year'
-    #   – 'release_date' entfällt komplett
-    df_final = (
-        df_final
-            .rename(columns={"year": "release_year"})
-            .drop(columns=["release_date"], errors="ignore")
-    )
+    # Spaltenharmonisierung: year → release_year (release_date behalten!)
+    df_final = df_final.rename(columns={"year": "release_year"})
 
-    # 10) Spaltenauswahl ------------------------------------------------------
+    # **NEU**: Duplikate identifizieren & als Datei persistieren (aber NICHT zurückgeben)
+    dup_mask = df_final.duplicated(subset=["title", "release_year"], keep=False)
+    duplicates = df_final[dup_mask].copy()
+    if not duplicates.empty:
+        DUPLICATES_OUT.parent.mkdir(parents=True, exist_ok=True)
+        duplicates.to_csv(DUPLICATES_OUT, index=False)
+        print(f"🟠 Duplikate persistiert: {DUPLICATES_OUT} (Zeilen: {len(duplicates)})")
+
+    # Finale Spaltenauswahl (wie bei dir)
+    id_cols_final = [c for c in df_final.columns if str(c).startswith("ID_")]
     final_columns = [
+        *id_cols_final,
         "title",
         "release_year",
         "genres",
+        "release_date",
         "rating_imdb",
         "rating_movielens",
         "rating_metacritic",
         "rating_rt_audience",
         "count_ratings",
     ]
-    return df_final[[c for c in final_columns if c in df_final.columns]]
+    df_final = df_final[[c for c in final_columns if c in df_final.columns]]
+
+    # Rückgabe: EIN DataFrame (damit main_pipeline.py .filter(...) etc. weiter funktioniert)
+    return df_final

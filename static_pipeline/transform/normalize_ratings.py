@@ -102,6 +102,13 @@ def calculate_normalized_ratings_and_superscores(
         cols_calculated_in_df_for_superscores = ['superscore_mean', 'superscore_median'] 
         valid_cols_to_update = [c for c in cols_calculated_in_df_for_superscores if c in df_for_superscores.columns]
 
+        for col in valid_cols_to_update:
+            df_for_superscores[col] = pd.to_numeric(
+                df_for_superscores[col], errors="coerce"
+            ).astype("float64")
+            if col in df.columns and df[col].dtype != "float64":
+                df[col] = pd.to_numeric(df[col], errors="coerce").astype("float64")
+                
         if valid_cols_to_update:
             df.update(df_for_superscores[valid_cols_to_update]) 
             logging.info(f"Normalize_ratings: Superscores für {len(df_for_superscores)} Filme aktualisiert.")

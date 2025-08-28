@@ -1,0 +1,27 @@
+[
+  {
+    "field": "ID",
+    "type" : "int64",
+    "rule" : "must be preserved unchanged"
+  },
+  {
+    "field": "title",
+    "type" : "str",
+    "rule" : "must not be empty, clean the title so it is presentable (lowercase, no special characters etc.), must be unique (title, release_year), prefer the original title"
+  },
+  {
+    "field": "release_year",
+    "type" : "int64 | pd.NA",
+    "rule" : "value <=2025 & realistic (1870-2025)"
+  },
+  {
+    "field": "genres",
+    "type" : "list[str]",
+    "rule" : "optional"
+  },
+  {
+    "field": "rating",
+    "type" : "float",
+    "rule" : "must never be NaN"
+  }
+]

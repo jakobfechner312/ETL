@@ -1,5 +1,5 @@
 logging:
-  level: INFO
+  level: WARNING
 
 sources:
   ImdbAdapter:
@@ -7,8 +7,8 @@ sources:
   MetacriticAdapter:
     file_path: '../static_pipeline/data/raw/metacritic_movies.csv'
   MovielensAdapter:
-    movies_path: '../static_pipeline/data/raw/movies.csv'
-    ratings_path: '../static_pipeline/data/raw/ratings.csv'
+    # Nutzen Sie eine bereits aggregierte Datei, um Verarbeitung zu vereinfachen
+    file_path: '../static_pipeline/data/raw/movielens_aggregated.csv'
   RottenTomatoesAdapter:
     file_path: '../static_pipeline/data/raw/rotten_tomatoes_movies.csv'
 
@@ -26,7 +26,12 @@ processing:
 output:
   csv_path: '../static_pipeline/data/processed/test_merge_result.csv'
 
-  analysis: # NEUER ABSCHNITT für Rating-Analysen
+  analysis: 
     analysis_report_path: "data/analysis_reports/comprehensive_movie_merge_report.txt"
     raw_ratings_output_dir: "data/analysis_reports/01_raw_movie_data_insights"
     final_ratings_output_dir: "data/analysis_reports/02_processed_movie_data_insights"
+
+
+aux_output_dirs:
+  invalid: "../static_pipeline/data/intermediate_adapter_outputs/invalid"
+  duplicates: "../static_pipeline/data/intermediate_adapter_outputs/duplicates"

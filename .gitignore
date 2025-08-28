@@ -1,17 +1,39 @@
 # ------------------------------------------------
-# Alles ignorieren …
+# Basis: alles ignorieren …
 *
-# … ausser den Projekten
+# … außer den Projekt-Ordnern & .gitignore selbst
 !.gitignore
-
-# adaptive komplett zulassen
 !adaptive/
 !adaptive/**
-
-# aber die .env trotzdem nicht
-adaptive/.env
-
-# static_pipeline komplett zulassen
 !static_pipeline/
 !static_pipeline/**
+
+# System/Cache
+.DS_Store
+**/__pycache__/
+**/*.pyc
+**/.ipynb_checkpoints/
+
+# adaptive: große/abgeleitete Daten und Laufartefakte ausschließen
+adaptive/run_artifacts/
+adaptive/merged/
+adaptive/cleaned/
+adaptive/data/
+adaptive/**/*.csv
+
+# Notebooks: im Repo (Outputs werden geleert)
+# adaptive/dynamic_main.ipynb
+# adaptive/dynamic_seed_test.ipynb
+
+# .env in adaptive bleibt privat
+adaptive/.env
+
+# static_pipeline: Daten & Artefakte ausschließen
+static_pipeline/data/raw/
+static_pipeline/data/intermediate_adapter_outputs/
+static_pipeline/data/processed/
+static_pipeline/data/duplicates/
+static_pipeline/data/validation_reports/
+static_pipeline/data/analysis_reports/
+static_pipeline/**/*.csv
 # ------------------------------------------------

@@ -1,5 +1,0 @@
-,mean,std,min,max,median,count
-IMDB (Roh),6.74,0.89,1.0,9.3,6.8,3023.0
-MovieLens (Roh),3.26,0.87,0.5,5.0,3.4,8777.0
-Metacritic (Roh),57.89,17.69,8.0,100.0,59.0,8706.0
-RottenTomatoes (Roh),60.55,20.51,0.0,100.0,62.0,16157.0

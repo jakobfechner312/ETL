@@ -1,5 +1,0 @@
-title,release_year,genres,rating,_errors
-Hamlet,2000,"['Drama', 'Television']",70.0,['duplicate record']
-American Son,,['Drama'],48.0,['duplicate record']
-Noise,2007,"['Art House & International', 'Documentary', 'Drama', 'Mystery & Suspense', 'Special Interest']",83.0,['duplicate record']
-Wuthering Heights,,"['Drama', 'Romance']",25.0,['duplicate record']
