@@ -1,0 +1,14 @@
+RUN 20250829_102535 started with pandas 2.3.0
+[TRANSFORM][attempt=0] ERROR
+Traceback (most recent call last):
+  File "/var/folders/1d/r43xvhb549d6dky2tk41bsjw0000gn/T/ipykernel_96271/3479072884.py", line 254, in main
+    exec_generated_code(t_code, globals())
+  File "/var/folders/1d/r43xvhb549d6dky2tk41bsjw0000gn/T/ipykernel_96271/3479072884.py", line 80, in exec_generated_code
+    exec(block, g)
+  File "<string>", line 43, in <module>
+ValueError: too many values to unpack (expected 2)
+[TRANSFORM][attempt=1] OK, rows=3343
+[TRANSFORM] dropped 5 rows → /Users/jakob/ba_etl/adaptive/data/invalide/my_new_source_invalid.csv
+[VALIDATOR] OK, valid_output=3343
+[OUTPUT] written → /Users/jakob/ba_etl/adaptive/cleaned/my_new_source.csv
+[MANIFEST] /Users/jakob/ba_etl/adaptive/run_artifacts/my_new_source_20250829_102535/manifest.json

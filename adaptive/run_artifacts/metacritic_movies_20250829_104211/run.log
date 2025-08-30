@@ -1,0 +1,6 @@
+RUN 20250829_104211 started with pandas 2.3.0
+[TRANSFORM][attempt=0] OK, rows=9120
+[TRANSFORM] dropped 1 rows → /Users/jakob/ba_etl/adaptive/data/invalide/metacritic_movies_invalid.csv
+[VALIDATOR] OK, valid_output=9120
+[OUTPUT] written → /Users/jakob/ba_etl/adaptive/cleaned/metacritic_movies.csv
+[MANIFEST] /Users/jakob/ba_etl/adaptive/run_artifacts/metacritic_movies_20250829_104211/manifest.json

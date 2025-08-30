@@ -1,0 +1,6 @@
+RUN 20250829_103722 started with pandas 2.3.0
+[TRANSFORM][attempt=0] OK, rows=3343
+[TRANSFORM] dropped 5 rows → /Users/jakob/ba_etl/adaptive/data/invalide/imdb_data_invalid.csv
+[VALIDATOR] OK, valid_output=3343
+[OUTPUT] written → /Users/jakob/ba_etl/adaptive/cleaned/imdb_data.csv
+[MANIFEST] /Users/jakob/ba_etl/adaptive/run_artifacts/imdb_data_20250829_103722/manifest.json

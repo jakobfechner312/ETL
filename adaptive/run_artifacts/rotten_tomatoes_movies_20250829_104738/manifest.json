@@ -1,0 +1,30 @@
+{
+  "run_id": "20250829_104738",
+  "dataset": "/Users/jakob/ba_etl/adaptive/data/raw/rotten_tomatoes_movies.csv",
+  "model": "o4-mini",
+  "sample_size": 5,
+  "rng_state": 42,
+  "outputs": {
+    "cleaned_csv": "/Users/jakob/ba_etl/adaptive/cleaned/rotten_tomatoes_movies.csv",
+    "transform_invalid_count": 173,
+    "validator_invalid_count": 0
+  },
+  "artifacts": {
+    "transform": {
+      "prompt": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/rotten_tomatoes_movies_20250829_104738/transform_prompt.txt"
+      ],
+      "code": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/rotten_tomatoes_movies_20250829_104738/transform_code_45afcd1f9272.py"
+      ]
+    },
+    "validator": {
+      "prompt": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/rotten_tomatoes_movies_20250829_104738/validator_prompt.txt"
+      ],
+      "code": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/rotten_tomatoes_movies_20250829_104738/validator_code_8ae200775813.py"
+      ]
+    }
+  }
+}

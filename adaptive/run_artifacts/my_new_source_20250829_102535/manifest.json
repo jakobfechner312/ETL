@@ -1,0 +1,32 @@
+{
+  "run_id": "20250829_102535",
+  "dataset": "/Users/jakob/ba_etl/adaptive/data/raw/my_new_source.csv",
+  "model": "o4-mini",
+  "sample_size": 5,
+  "rng_state": 42,
+  "outputs": {
+    "cleaned_csv": "/Users/jakob/ba_etl/adaptive/cleaned/my_new_source.csv",
+    "transform_invalid_count": 5,
+    "validator_invalid_count": 0
+  },
+  "artifacts": {
+    "transform": {
+      "prompt": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/my_new_source_20250829_102535/transform_prompt.txt",
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/my_new_source_20250829_102535/transform_prompt_retry.txt"
+      ],
+      "code": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/my_new_source_20250829_102535/transform_code_38d39819c83c.py",
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/my_new_source_20250829_102535/transform_code_retry_dc1f8807b559.py"
+      ]
+    },
+    "validator": {
+      "prompt": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/my_new_source_20250829_102535/validator_prompt.txt"
+      ],
+      "code": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/my_new_source_20250829_102535/validator_code_f7c22f44bd63.py"
+      ]
+    }
+  }
+}

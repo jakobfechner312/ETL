@@ -1,0 +1,60 @@
+[ROLE]
+    You are an expert data scientist specialised in cleansing and standardising film datasets.
+    Try to interpret the schema and the context and the metadata to understand the data.
+
+    [PROCESS]
+      (a) [PLAN] Outline your high-level approach.
+      (b) [THINK] Write Pandas code step by step to fullfill the - ID: (type: int64) must be preserved unchanged
+- title: (type: str) must not be empty, clean the title so it is presentable (lowercase, no special characters etc.), must be unique (title, release_year), prefer the original title
+- release_year: (type: int64 | pd.NA) value <=2025 & realistic (1870-2025)
+- genres: (type: list[str]) optional
+- rating: (type: float) must never be NaN.
+      (c) [CHECK] Self-verify logic.
+      (d) [ANSWER] return one ```python``` block that:
+          • starts with  output = []
+          • Select the most complete numeric rating, prefer original ratings, fallback if empty.
+          • preserve the column ID_IMDB unchanged in every output row as the ID column
+          • interprets two-digit years so that the final four-digit year falls in the realistic range 1900-2025
+          • genres: list of strings 
+          • title: normalize exactly: ascii+lower; remove one trailing "(YYYY)" then one trailing "(...)"; punctuation→space; collapse spaces+trim; drop trailing "the"; dedup tokens (keep order).
+          • release_year: could also be "streaming_release_year", if necessary extract it 
+          • builds an additional list  invalid_entries
+            – append a dict whenever a row is skipped
+              { "row": <original_row_as_dict>, "reason": "<short text>" }
+
+    [SCHEMA]
+    - ID: (type: int64) must be preserved unchanged
+- title: (type: str) must not be empty, clean the title so it is presentable (lowercase, no special characters etc.), must be unique (title, release_year), prefer the original title
+- release_year: (type: int64 | pd.NA) value <=2025 & realistic (1870-2025)
+- genres: (type: list[str]) optional
+- rating: (type: float) must never be NaN
+
+    [CONTEXT]
+           id     primaryTitle    originalTitle  isAdult  runtimeMinutes                   genres  averageRating  numVotes    budget       gross      release_date         directors  ID_IMDB
+tt0816692     Interstellar     Interstellar        0             169   Adventure,Drama,Sci-Fi            8.7   2009279 165000000 703170837.0  October 26, 2014 Christopher Nolan     1830
+tt1840309        Divergent        Divergent        0             139 Action,Adventure,Mystery            6.6    479336  85000000 288885818.0    March 18, 2014       Neil Burger     2628
+tt0424345        Clerks II        Clerks II        0              97                   Comedy            7.3    139558   5000000  26986174.0      May 26, 2006       Kevin Smith     1552
+tt0325710 The Last Samurai The Last Samurai        0             154             Action,Drama            7.8    461081 140000000 454627263.0 November 22, 2003      Edward Zwick     1237
+tt3416532  A Monster Calls  A Monster Calls        0             108   Adventure,Drama,Family            7.4     92032  43000000  47309313.0 September 9, 2016       J.A. Bayona     2975
+
+    [METADATA]
+    <class 'pandas.core.frame.DataFrame'>
+RangeIndex: 3348 entries, 0 to 3347
+Data columns (total 13 columns):
+ #   Column          Non-Null Count  Dtype  
+---  ------          --------------  -----  
+ 0   id              3348 non-null   object 
+ 1   primaryTitle    3348 non-null   object 
+ 2   originalTitle   3348 non-null   object 
+ 3   isAdult         3348 non-null   int64  
+ 4   runtimeMinutes  3348 non-null   int64  
+ 5   genres          3348 non-null   object 
+ 6   averageRating   3348 non-null   float64
+ 7   numVotes        3348 non-null   int64  
+ 8   budget          3348 non-null   int64  
+ 9   gross           3297 non-null   float64
+ 10  release_date    3343 non-null   object 
+ 11  directors       3348 non-null   object 
+ 12  ID_IMDB         3348 non-null   int64  
+dtypes: float64(2), int64(5), object(6)
+memory usage: 340.2+ KB

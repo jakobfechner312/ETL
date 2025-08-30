@@ -1,0 +1,6 @@
+RUN 20250829_104738 started with pandas 2.3.0
+[TRANSFORM][attempt=0] OK, rows=17539
+[TRANSFORM] dropped 173 rows → /Users/jakob/ba_etl/adaptive/data/invalide/rotten_tomatoes_movies_invalid.csv
+[VALIDATOR] OK, valid_output=17539
+[OUTPUT] written → /Users/jakob/ba_etl/adaptive/cleaned/rotten_tomatoes_movies.csv
+[MANIFEST] /Users/jakob/ba_etl/adaptive/run_artifacts/rotten_tomatoes_movies_20250829_104738/manifest.json

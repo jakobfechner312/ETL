@@ -1,0 +1,30 @@
+{
+  "run_id": "20250829_104211",
+  "dataset": "/Users/jakob/ba_etl/adaptive/data/raw/metacritic_movies.csv",
+  "model": "o4-mini",
+  "sample_size": 5,
+  "rng_state": 42,
+  "outputs": {
+    "cleaned_csv": "/Users/jakob/ba_etl/adaptive/cleaned/metacritic_movies.csv",
+    "transform_invalid_count": 1,
+    "validator_invalid_count": 0
+  },
+  "artifacts": {
+    "transform": {
+      "prompt": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/metacritic_movies_20250829_104211/transform_prompt.txt"
+      ],
+      "code": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/metacritic_movies_20250829_104211/transform_code_6dd798b98ad3.py"
+      ]
+    },
+    "validator": {
+      "prompt": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/metacritic_movies_20250829_104211/validator_prompt.txt"
+      ],
+      "code": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/metacritic_movies_20250829_104211/validator_code_1c9d5f4c6c1b.py"
+      ]
+    }
+  }
+}

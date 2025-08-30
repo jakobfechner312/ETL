@@ -1,0 +1,30 @@
+{
+  "run_id": "20250829_104624",
+  "dataset": "/Users/jakob/ba_etl/adaptive/data/raw/movielens_aggregated.csv",
+  "model": "o4-mini",
+  "sample_size": 5,
+  "rng_state": 42,
+  "outputs": {
+    "cleaned_csv": "/Users/jakob/ba_etl/adaptive/cleaned/movielens_aggregated.csv",
+    "transform_invalid_count": 18,
+    "validator_invalid_count": 0
+  },
+  "artifacts": {
+    "transform": {
+      "prompt": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/movielens_aggregated_20250829_104624/transform_prompt.txt"
+      ],
+      "code": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/movielens_aggregated_20250829_104624/transform_code_03d838269f4a.py"
+      ]
+    },
+    "validator": {
+      "prompt": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/movielens_aggregated_20250829_104624/validator_prompt.txt"
+      ],
+      "code": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/movielens_aggregated_20250829_104624/validator_code_b1dd8ee0ef68.py"
+      ]
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "run_id": "20250829_103722",
+  "dataset": "/Users/jakob/ba_etl/adaptive/data/raw/imdb_data.csv",
+  "model": "o4-mini",
+  "sample_size": 5,
+  "rng_state": 42,
+  "outputs": {
+    "cleaned_csv": "/Users/jakob/ba_etl/adaptive/cleaned/imdb_data.csv",
+    "transform_invalid_count": 5,
+    "validator_invalid_count": 0
+  },
+  "artifacts": {
+    "transform": {
+      "prompt": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/imdb_data_20250829_103722/transform_prompt.txt"
+      ],
+      "code": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/imdb_data_20250829_103722/transform_code_e79fbd47144a.py"
+      ]
+    },
+    "validator": {
+      "prompt": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/imdb_data_20250829_103722/validator_prompt.txt"
+      ],
+      "code": [
+        "/Users/jakob/ba_etl/adaptive/run_artifacts/imdb_data_20250829_103722/validator_code_5c7c03a011b5.py"
+      ]
+    }
+  }
+}
