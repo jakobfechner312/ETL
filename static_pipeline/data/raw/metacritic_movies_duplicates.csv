@@ -1,0 +1,2 @@
+movie_title,release_date,genre,meta_mixed,meta_negative,meta_positive,metascore,user_mixed,user_negative,user_positive,userscore,title,release_date_meta,year,rating_metacritic,reason
+Godzilla: King of the Monsters,31-May-19,"Action,Adventure,Sci-Fi,Fantasy,Horror",23,9,14,48,123,74,490,7.3,godzilla king of the monsters,2019-05-31,2019,48.0,duplicate title+year

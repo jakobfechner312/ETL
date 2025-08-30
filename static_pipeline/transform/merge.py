@@ -78,7 +78,7 @@ def merge_sources(dfs: List[pd.DataFrame]) -> pd.DataFrame:
 
         tmp = df.copy()
 
-        # Rating-Spalte identifizieren (deine Heuristik)
+        # Rating-Spalte identifizieren
         rating_col, source = None, None
         for col in tmp.columns:
             if col.startswith("rating_"):
@@ -217,7 +217,7 @@ def merge_sources(dfs: List[pd.DataFrame]) -> pd.DataFrame:
     # Spaltenharmonisierung: year → release_year (release_date behalten!)
     df_final = df_final.rename(columns={"year": "release_year"})
 
-    # **NEU**: Duplikate identifizieren & als Datei persistieren (aber NICHT zurückgeben)
+    # Duplikate identifizieren & als Datei persistieren (aber NICHT zurückgeben)
     dup_mask = df_final.duplicated(subset=["title", "release_year"], keep=False)
     duplicates = df_final[dup_mask].copy()
     if not duplicates.empty:
@@ -225,7 +225,7 @@ def merge_sources(dfs: List[pd.DataFrame]) -> pd.DataFrame:
         duplicates.to_csv(DUPLICATES_OUT, index=False)
         print(f"🟠 Duplikate persistiert: {DUPLICATES_OUT} (Zeilen: {len(duplicates)})")
 
-    # Finale Spaltenauswahl (wie bei dir)
+    # Finale Spaltenauswahl
     id_cols_final = [c for c in df_final.columns if str(c).startswith("ID_")]
     final_columns = [
         *id_cols_final,
@@ -241,5 +241,5 @@ def merge_sources(dfs: List[pd.DataFrame]) -> pd.DataFrame:
     ]
     df_final = df_final[[c for c in final_columns if c in df_final.columns]]
 
-    # Rückgabe: EIN DataFrame (damit main_pipeline.py .filter(...) etc. weiter funktioniert)
+    # Rückgabe
     return df_final
