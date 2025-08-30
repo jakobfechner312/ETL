@@ -7,6 +7,10 @@
 !adaptive/**
 !static_pipeline/
 !static_pipeline/**
+!docs/
+!docs/**
+!repro_snapshot_*/
+!repro_snapshot_*/**
 
 # System/Cache
 .DS_Store
@@ -16,6 +20,13 @@
 
 # adaptive: große/abgeleitete Daten und Laufartefakte ausschließen
 adaptive/run_artifacts/
+!adaptive/run_artifacts/
+# Whitelist: neueste Run-Artefakte je Quelle
+!adaptive/run_artifacts/imdb_data_20250829_103722/**
+!adaptive/run_artifacts/movielens_aggregated_20250829_104624/**
+!adaptive/run_artifacts/metacritic_movies_20250829_104211/**
+!adaptive/run_artifacts/rotten_tomatoes_movies_20250829_104738/**
+!adaptive/run_artifacts/my_new_source_20250829_102535/**
 adaptive/merged/
 # Roh- und Clean-Daten explizit zulassen
 !adaptive/data/raw/**

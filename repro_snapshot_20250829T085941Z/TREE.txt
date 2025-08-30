@@ -1,0 +1,36 @@
+repo/
+├─ config/
+├─ adaptive/cleaned/
+│  ├─ imdb_data.csv
+│  ├─ metacritic_movies.csv
+│  ├─ movielens_aggregated.csv
+│  ├─ rotten_tomatoes_movies.csv
+└─ adaptive/run_artifacts/
+   ├─ imdb_data_20250829_103722
+   │  ├─ transform_prompt.txt
+   │  ├─ transform_code_e79fbd47144a.py
+   │  ├─ validator_prompt.txt
+   │  ├─ validator_code_5c7c03a011b5.py
+   │  ├─ run.log
+   │  ├─ manifest.json
+   ├─ metacritic_movies_20250829_104211
+   │  ├─ transform_prompt.txt
+   │  ├─ transform_code_6dd798b98ad3.py
+   │  ├─ validator_prompt.txt
+   │  ├─ validator_code_1c9d5f4c6c1b.py
+   │  ├─ run.log
+   │  ├─ manifest.json
+   ├─ rotten_tomatoes_movies_20250829_104738
+   │  ├─ transform_prompt.txt
+   │  ├─ transform_code_45afcd1f9272.py
+   │  ├─ validator_prompt.txt
+   │  ├─ validator_code_8ae200775813.py
+   │  ├─ run.log
+   │  ├─ manifest.json
+   ├─ movielens_aggregated_20250829_104624
+   │  ├─ transform_prompt.txt
+   │  ├─ transform_code_03d838269f4a.py
+   │  ├─ validator_prompt.txt
+   │  ├─ validator_code_b1dd8ee0ef68.py
+   │  ├─ run.log
+   │  ├─ manifest.json
