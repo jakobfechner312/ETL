@@ -11,6 +11,9 @@
 !docs/**
 !repro_snapshot_*/
 !repro_snapshot_*/**
+!README.md
+!requirements.txt
+!.env.example
 
 # System/Cache
 .DS_Store

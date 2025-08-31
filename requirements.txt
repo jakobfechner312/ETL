@@ -1,0 +1,13 @@
+# Core data stack
+pandas
+numpy
+Unidecode
+PyYAML
+
+# Adaptive (LLM) & env support
+python-dotenv
+openai
+
+# For notebooks
+jupyter
+ipykernel
