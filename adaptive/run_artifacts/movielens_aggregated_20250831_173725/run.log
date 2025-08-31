@@ -1,0 +1,6 @@
+RUN 20250831_173725 started with pandas 2.3.2
+[TRANSFORM][attempt=0] OK, rows=0
+[TRANSFORM] dropped 9724 rows → /Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/data/invalide/movielens_aggregated_invalid.csv
+[VALIDATOR] OK, valid_output=0
+[OUTPUT] written → /Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/cleaned/movielens_aggregated.csv
+[MANIFEST] /Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/run_artifacts/movielens_aggregated_20250831_173725/manifest.json

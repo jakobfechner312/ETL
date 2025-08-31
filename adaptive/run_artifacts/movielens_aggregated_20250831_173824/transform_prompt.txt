@@ -1,0 +1,53 @@
+[ROLE]
+    You are an expert data scientist specialised in cleansing and standardising film datasets.
+    Try to interpret the schema and the context and the metadata to understand the data.
+
+    [PROCESS]
+      (a) [PLAN] Outline your high-level approach.
+      (b) [THINK] Write Pandas code step by step to fullfill the - ID: (type: int64) must be preserved unchanged
+- title: (type: str) must not be empty, clean the title so it is presentable (lowercase, no special characters etc.), must be unique (title, release_year), prefer the original title
+- release_year: (type: int64 | pd.NA) value <=2025 & realistic (1870-2025)
+- genres: (type: list[str]) optional
+- rating: (type: float) must never be NaN.
+      (c) [CHECK] Self-verify logic.
+      (d) [ANSWER] return one ```python``` block that:
+          • starts with  output = []
+          • Select the most complete numeric rating, prefer original ratings, fallback if empty.
+          • preserve the column ID_MOVIELENS unchanged in every output row as the ID column
+          • interprets two-digit years so that the final four-digit year falls in the realistic range 1900-2025
+          • genres: list of strings 
+          • title: normalize exactly: ascii+lower; remove one trailing "(YYYY)" then one trailing "(...)"; punctuation→space; collapse spaces+trim; drop trailing "the"; dedup tokens (keep order).
+          • release_year: could also be "streaming_release_year", if necessary extract it, has to be between 1870 and 2025
+          • builds an additional list  invalid_entries
+            – append a dict whenever a row is skipped
+              { "row": <original_row_as_dict>, "reason": "<short text>" }
+
+    [SCHEMA]
+    - ID: (type: int64) must be preserved unchanged
+- title: (type: str) must not be empty, clean the title so it is presentable (lowercase, no special characters etc.), must be unique (title, release_year), prefer the original title
+- release_year: (type: int64 | pd.NA) value <=2025 & realistic (1870-2025)
+- genres: (type: list[str]) optional
+- rating: (type: float) must never be NaN
+
+    [CONTEXT]
+     movieId                             title               genres  average_rating  rating_count  ID_MOVIELENS
+    1500        Grosse Pointe Blank (1997) Comedy|Crime|Romance             3.6            59          1146
+  114662            American Sniper (2014)           Action|War             3.8            15          8506
+    5490                The Big Bus (1976)        Action|Comedy             5.0             1          3904
+    2151 Gods Must Be Crazy II, The (1989)               Comedy             3.8             6          1609
+  148424                    Chi-Raq (2015)         Comedy|Drama             3.8             2          9142
+
+    [METADATA]
+    <class 'pandas.core.frame.DataFrame'>
+RangeIndex: 9724 entries, 0 to 9723
+Data columns (total 6 columns):
+ #   Column          Non-Null Count  Dtype  
+---  ------          --------------  -----  
+ 0   movieId         9724 non-null   int64  
+ 1   title           9724 non-null   object 
+ 2   genres          9724 non-null   object 
+ 3   average_rating  9724 non-null   float64
+ 4   rating_count    9724 non-null   int64  
+ 5   ID_MOVIELENS    9724 non-null   int64  
+dtypes: float64(1), int64(3), object(2)
+memory usage: 455.9+ KB

@@ -1,0 +1,15 @@
+RUN 20250831_173544 started with pandas 2.3.2
+[TRANSFORM][attempt=0] ERROR
+Traceback (most recent call last):
+  File "/var/folders/1d/r43xvhb549d6dky2tk41bsjw0000gn/T/ipykernel_44175/628214471.py", line 254, in main
+    exec_generated_code(t_code, globals())
+  File "/var/folders/1d/r43xvhb549d6dky2tk41bsjw0000gn/T/ipykernel_44175/628214471.py", line 80, in exec_generated_code
+    exec(block, g)
+  File "<string>", line 63, in <module>
+  File "pandas/_libs/missing.pyx", line 392, in pandas._libs.missing.NAType.__bool__
+TypeError: boolean value of NA is ambiguous
+[TRANSFORM][attempt=1] OK, rows=9120
+[TRANSFORM] dropped 1 rows → /Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/data/invalide/metacritic_movies_invalid.csv
+[VALIDATOR] OK, valid_output=9120
+[OUTPUT] written → /Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/cleaned/metacritic_movies.csv
+[MANIFEST] /Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/run_artifacts/metacritic_movies_20250831_173544/manifest.json

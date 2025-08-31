@@ -1,0 +1,2 @@
+row,reason
+"{'movie_title': 'Godzilla: King of the Monsters', 'release_date': '31-May-19', 'genre': 'Action,Adventure,Sci-Fi,Fantasy,Horror', 'meta_mixed': 23, 'meta_negative': 9, 'meta_positive': 14, 'metascore': 48, 'user_mixed': '123', 'user_negative': '74', 'user_positive': '490', 'userscore': '7.3', 'ID_METACRITIC': 1917}",duplicate title/year

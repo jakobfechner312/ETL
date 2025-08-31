@@ -1,0 +1,30 @@
+{
+  "run_id": "20250831_173824",
+  "dataset": "/Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/data/raw/movielens_aggregated.csv",
+  "model": "o4-mini",
+  "sample_size": 5,
+  "rng_state": 42,
+  "outputs": {
+    "cleaned_csv": "/Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/cleaned/movielens_aggregated.csv",
+    "transform_invalid_count": 18,
+    "validator_invalid_count": 0
+  },
+  "artifacts": {
+    "transform": {
+      "prompt": [
+        "/Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/run_artifacts/movielens_aggregated_20250831_173824/transform_prompt.txt"
+      ],
+      "code": [
+        "/Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/run_artifacts/movielens_aggregated_20250831_173824/transform_code_5a71e3f68600.py"
+      ]
+    },
+    "validator": {
+      "prompt": [
+        "/Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/run_artifacts/movielens_aggregated_20250831_173824/validator_prompt.txt"
+      ],
+      "code": [
+        "/Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/run_artifacts/movielens_aggregated_20250831_173824/validator_code_14db2f8e7db9.py"
+      ]
+    }
+  }
+}

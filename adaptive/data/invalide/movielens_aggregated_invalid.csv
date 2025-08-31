@@ -1,0 +1,19 @@
+row,reason
+"{'movieId': 26958, 'title': 'Emma (1996)', 'genres': 'Romance', 'average_rating': 3.5, 'rating_count': 1, 'ID_MOVIELENS': 5589}",duplicate_title_year
+"{'movieId': 40697, 'title': 'Babylon 5', 'genres': 'Sci-Fi', 'average_rating': 2.2, 'rating_count': 2, 'ID_MOVIELENS': 6043}",no_release_year
+"{'movieId': 64997, 'title': 'War of the Worlds (2005)', 'genres': 'Action|Sci-Fi', 'average_rating': 3.0, 'rating_count': 2, 'ID_MOVIELENS': 6916}",duplicate_title_year
+"{'movieId': 140956, 'title': 'Ready Player One', 'genres': 'Action|Sci-Fi|Thriller', 'average_rating': 3.5, 'rating_count': 4, 'ID_MOVIELENS': 9014}",no_release_year
+"{'movieId': 143410, 'title': 'Hyena Road', 'genres': '(no genres listed)', 'average_rating': 2.0, 'rating_count': 1, 'ID_MOVIELENS': 9074}",no_release_year
+"{'movieId': 144606, 'title': 'Confessions of a Dangerous Mind (2002)', 'genres': 'Comedy|Crime|Drama|Romance|Thriller', 'average_rating': 4.0, 'rating_count': 1, 'ID_MOVIELENS': 9089}",duplicate_title_year
+"{'movieId': 147002, 'title': 'Eros (2004)', 'genres': 'Drama|Romance', 'average_rating': 4.0, 'rating_count': 1, 'ID_MOVIELENS': 9118}",duplicate_title_year
+"{'movieId': 147250, 'title': 'The Adventures of Sherlock Holmes and Doctor Watson', 'genres': '(no genres listed)', 'average_rating': 5.0, 'rating_count': 1, 'ID_MOVIELENS': 9121}",no_release_year
+"{'movieId': 149334, 'title': 'Nocturnal Animals', 'genres': 'Drama|Thriller', 'average_rating': 3.0, 'rating_count': 1, 'ID_MOVIELENS': 9162}",no_release_year
+"{'movieId': 156605, 'title': 'Paterson', 'genres': '(no genres listed)', 'average_rating': 4.5, 'rating_count': 1, 'ID_MOVIELENS': 9242}",no_release_year
+"{'movieId': 162414, 'title': 'Moonlight', 'genres': 'Drama', 'average_rating': 5.0, 'rating_count': 1, 'ID_MOVIELENS': 9350}",no_release_year
+"{'movieId': 167570, 'title': 'The OA', 'genres': '(no genres listed)', 'average_rating': 4.0, 'rating_count': 1, 'ID_MOVIELENS': 9431}",no_release_year
+"{'movieId': 168358, 'title': 'Saturn 3 (1980)', 'genres': 'Sci-Fi|Thriller', 'average_rating': 2.5, 'rating_count': 1, 'ID_MOVIELENS': 9451}",duplicate_title_year
+"{'movieId': 171495, 'title': 'Cosmos', 'genres': '(no genres listed)', 'average_rating': 4.5, 'rating_count': 2, 'ID_MOVIELENS': 9497}",no_release_year
+"{'movieId': 171631, 'title': 'Maria Bamford: Old Baby', 'genres': '(no genres listed)', 'average_rating': 1.0, 'rating_count': 1, 'ID_MOVIELENS': 9498}",no_release_year
+"{'movieId': 171749, 'title': 'Death Note: Desu nôto (2006–2007)', 'genres': '(no genres listed)', 'average_rating': 5.0, 'rating_count': 1, 'ID_MOVIELENS': 9501}",no_release_year
+"{'movieId': 171891, 'title': 'Generation Iron 2', 'genres': '(no genres listed)', 'average_rating': 3.5, 'rating_count': 1, 'ID_MOVIELENS': 9508}",no_release_year
+"{'movieId': 176601, 'title': 'Black Mirror', 'genres': '(no genres listed)', 'average_rating': 5.0, 'rating_count': 1, 'ID_MOVIELENS': 9594}",no_release_year

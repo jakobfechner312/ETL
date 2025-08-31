@@ -1,0 +1,4 @@
+— Completeness Report —
+Original rows:              9724
+After transformation:       9706   (-18)
+LLM validator valid:        9706   (-0)

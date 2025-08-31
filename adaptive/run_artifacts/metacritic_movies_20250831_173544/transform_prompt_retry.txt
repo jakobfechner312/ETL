@@ -1,0 +1,75 @@
+[ROLE]
+    You are an expert data scientist specialised in cleansing and standardising film datasets.
+    Try to interpret the schema and the context and the metadata to understand the data.
+
+    [PROCESS]
+      (a) [PLAN] Outline your high-level approach.
+      (b) [THINK] Write Pandas code step by step to fullfill the - ID: (type: int64) must be preserved unchanged
+- title: (type: str) must not be empty, clean the title so it is presentable (lowercase, no special characters etc.), must be unique (title, release_year), prefer the original title
+- release_year: (type: int64 | pd.NA) value <=2025 & realistic (1870-2025)
+- genres: (type: list[str]) optional
+- rating: (type: float) must never be NaN.
+      (c) [CHECK] Self-verify logic.
+      (d) [ANSWER] return one ```python``` block that:
+          • starts with  output = []
+          • Select the most complete numeric rating, prefer original ratings, fallback if empty.
+          • preserve the column ID_METACRITIC unchanged in every output row as the ID column
+          • interprets two-digit years so that the final four-digit year falls in the realistic range 1900-2025
+          • genres: list of strings 
+          • title: normalize exactly: ascii+lower; remove one trailing "(YYYY)" then one trailing "(...)"; punctuation→space; collapse spaces+trim; drop trailing "the"; dedup tokens (keep order).
+          • release_year: could also be "streaming_release_year", if necessary extract it, has to be between 1870 and 2025
+          • builds an additional list  invalid_entries
+            – append a dict whenever a row is skipped
+              { "row": <original_row_as_dict>, "reason": "<short text>" }
+
+    [SCHEMA]
+    - ID: (type: int64) must be preserved unchanged
+- title: (type: str) must not be empty, clean the title so it is presentable (lowercase, no special characters etc.), must be unique (title, release_year), prefer the original title
+- release_year: (type: int64 | pd.NA) value <=2025 & realistic (1870-2025)
+- genres: (type: list[str]) optional
+- rating: (type: float) must never be NaN
+
+    [CONTEXT]
+                         movie_title release_date                                      genre  meta_mixed  meta_negative  meta_positive  metascore user_mixed user_negative user_positive userscore  ID_METACRITIC
+               Countdown to Zero    23-Jul-10                                Documentary           6              0             20         70          4             2            11       6.5           7198
+                Tears of the Sun     7-Mar-03                  Action,Drama,Thriller,War          17              7             12         48         21             7            27       6.6           3134
+Spirit: Stallion of the Cimarron    24-May-02 Adventure,Romance,Western,Animation,Family           8              6             15         52         13             4            80       8.2           1447
+           Taxi to the Dark Side    18-Jan-08                      Crime,War,Documentary           0              0             25         82          5             7            28       7.1           5058
+  Steve Jobs: Man in the Machine     4-Sep-15                                Documentary           3              0             17         72          3             6            18       6.2           5418
+
+    [METADATA]
+    <class 'pandas.core.frame.DataFrame'>
+RangeIndex: 9121 entries, 0 to 9120
+Data columns (total 12 columns):
+ #   Column         Non-Null Count  Dtype 
+---  ------         --------------  ----- 
+ 0   movie_title    9121 non-null   object
+ 1   release_date   9121 non-null   object
+ 2   genre          9121 non-null   object
+ 3   meta_mixed     9121 non-null   int64 
+ 4   meta_negative  9121 non-null   int64 
+ 5   meta_positive  9121 non-null   int64 
+ 6   metascore      9121 non-null   int64 
+ 7   user_mixed     9121 non-null   object
+ 8   user_negative  9121 non-null   object
+ 9   user_positive  9121 non-null   object
+ 10  userscore      9121 non-null   object
+ 11  ID_METACRITIC  9121 non-null   int64 
+dtypes: int64(5), object(7)
+memory usage: 855.2+ KB
+[TRANSFORMATION_ERROR]
+Traceback (most recent call last):
+  File "/var/folders/1d/r43xvhb549d6dky2tk41bsjw0000gn/T/ipykernel_44175/628214471.py", line 254, in main
+    exec_generated_code(t_code, globals())
+  File "/var/folders/1d/r43xvhb549d6dky2tk41bsjw0000gn/T/ipykernel_44175/628214471.py", line 80, in exec_generated_code
+    exec(block, g)
+  File "<string>", line 63, in <module>
+  File "pandas/_libs/missing.pyx", line 392, in pandas._libs.missing.NAType.__bool__
+Traceback (most recent call last):
+  File "/var/folders/1d/r43xvhb549d6dky2tk41bsjw0000gn/T/ipykernel_44175/628214471.py", line 254, in main
+    exec_generated_code(t_code, globals())
+  File "/var/folders/1d/r43xvhb549d6dky2tk41bsjw0000gn/T/ipykernel_44175/628214471.py", line 80, in exec_generated_code
+    exec(block, g)
+  File "<string>", line 63, in <module>
+  File "pandas/_libs/missing.pyx", line 392, in pandas._libs.missing.NAType.__bool__
+TypeError: boolean value of NA is ambiguous

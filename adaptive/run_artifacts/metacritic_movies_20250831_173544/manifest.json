@@ -1,0 +1,32 @@
+{
+  "run_id": "20250831_173544",
+  "dataset": "/Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/data/raw/metacritic_movies.csv",
+  "model": "o4-mini",
+  "sample_size": 5,
+  "rng_state": 42,
+  "outputs": {
+    "cleaned_csv": "/Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/cleaned/metacritic_movies.csv",
+    "transform_invalid_count": 1,
+    "validator_invalid_count": 0
+  },
+  "artifacts": {
+    "transform": {
+      "prompt": [
+        "/Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/run_artifacts/metacritic_movies_20250831_173544/transform_prompt.txt",
+        "/Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/run_artifacts/metacritic_movies_20250831_173544/transform_prompt_retry.txt"
+      ],
+      "code": [
+        "/Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/run_artifacts/metacritic_movies_20250831_173544/transform_code_9e361421c467.py",
+        "/Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/run_artifacts/metacritic_movies_20250831_173544/transform_code_retry_253647a5eb4e.py"
+      ]
+    },
+    "validator": {
+      "prompt": [
+        "/Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/run_artifacts/metacritic_movies_20250831_173544/validator_prompt.txt"
+      ],
+      "code": [
+        "/Users/jakob/Desktop/BachlelorThesis/Bachelor_final/ETL/adaptive/run_artifacts/metacritic_movies_20250831_173544/validator_code_1d427847e130.py"
+      ]
+    }
+  }
+}
