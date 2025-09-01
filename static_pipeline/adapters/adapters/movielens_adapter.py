@@ -36,9 +36,6 @@ class MovielensAdapter(BaseAdapter):
     def transform(self, data) -> pd.DataFrame:  # type: ignore[override]
         """Bereinigt und vereinheitlicht die Movielens-Daten."""
 
-        # Erkennen, ob *data* bereits das finale DataFrame (aggregiert) ist oder
-        # ob wir wie bisher zwei DataFrames (Filme + Ratings) erhalten haben.
-
         if isinstance(data, tuple):
             # --- Legacy-Pfad: Rohdateien ---
             df_movies, df_ratings = data

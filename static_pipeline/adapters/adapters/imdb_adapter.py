@@ -96,9 +96,7 @@ class ImdbAdapter(BaseAdapter):
                 pd.to_numeric(row.get(rating_col), errors="coerce") if rating_col else pd.NA
             )
             if pd.notna(rating):
-                rating = float(rating)          # garantiert Python-Float  → später Float64
-            # kein else: fehlendes Rating ist KEIN Invalid-Reason mehr
-
+                rating = float(rating)         
             # 4) Duplicate-Check
             key = (title.lower(), int(year) if pd.notna(year) else None)
             if key in seen_keys:

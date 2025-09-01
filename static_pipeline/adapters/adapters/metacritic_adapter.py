@@ -11,15 +11,9 @@ from transform.normalize import normalize_film_title
 class MetacriticAdapter(BaseAdapter):
     """Reiner Pandas-Adapter für Metacritic – mit Validierung & Logging."""
 
-    # ------------------------------------------------------------------ #
-    # 1) Extract                                                         #
-    # ------------------------------------------------------------------ #
-    def extract(self) -> pd.DataFrame:  # type: ignore[override]
+    def extract(self) -> pd.DataFrame: 
         return pd.read_csv(self.config["file_path"], on_bad_lines="skip")
 
-    # ------------------------------------------------------------------ #
-    # 2) Transform + Validate                                            #
-    # ------------------------------------------------------------------ #
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:  # type: ignore[override]
         df = df.copy()
         src_path = Path(self.config["file_path"])

@@ -11,3 +11,7 @@ openai
 # For notebooks
 jupyter
 ipykernel
+
+# Optional: plotting/diagnostics used in notebooks or analysis
+matplotlib
+seaborn
