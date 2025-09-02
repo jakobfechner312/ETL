@@ -111,6 +111,30 @@ Select kernel "ETL Pipeline (macOS)" in Jupyter.
 
 ---
 
+## Static Pipeline: Quickstart & Outputs
+
+- Prerequisites: Python 3.10+, install dependencies via:
+  ```bash
+  python3 -m venv .venv && source .venv/bin/activate
+  python3 -m pip install -r requirements.txt
+  ```
+- Configuration:
+  - Adjust `static_pipeline/config.yaml` (paths under `sources.*.file_path`).
+  - Relative paths are resolved from `static_pipeline/main_pipeline.py`.
+- Run:
+  ```bash
+  python3 static_pipeline/main_pipeline.py
+  ```
+- What you get (defaults; configurable via `output` in YAML):
+  - `static_pipeline/data/processed/final_filtered_superscore.csv`: Final dataset with normalized ratings and superscore.
+  - `static_pipeline/data/validation_reports/`: Text reports and `*_invalid_rows.csv` for schema/value issues.
+  - `static_pipeline/data/validation_reports/duplicates/`: Removed duplicates per adapter (timestamped).
+  - `static_pipeline/data/intermediate_adapter_outputs/`: Per-adapter CSVs (if `output.save_intermediate = true`).
+
+> Tip: If you only need the final dataset, check `final_filtered_superscore.csv`.
+
+---
+
 ## Configuration & Paths
 - The adaptive notebook derives directories from its own location and uses relative paths by default.
 - `DATA_PATH` in the adaptive notebook is now relative (e.g., `data/raw/movielens_aggregated.csv`). You can override it via CLI arg or `DATA_PATH` env var.

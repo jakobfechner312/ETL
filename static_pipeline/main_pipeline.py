@@ -1,3 +1,48 @@
+"""
+ETL-Static-Pipeline
+
+Dieses Modul orchestriert einen vollständigen ETL-Prozess (Extract, Transform, Load)
+für Filmbewertungen aus mehreren Datenquellen (IMDb, MovieLens, Metacritic,
+Rotten Tomatoes). Ziel ist es, datenquellenübergreifend zu mergen, Ratings zu
+normalisieren und einen aggregierten Superscore zu berechnen. Das Ergebnis wird
+als CSV ausgegeben, optional ergänzt um Zwischenstände und Validierungsreports.
+
+Überblick
+- Extract: Adapter lesen Quelldaten mittels konfigurierter Pfade ein und liefern
+  bereinigte Adapter-DataFrames zurück.
+- Transform: Mehrere Adapter-DataFrames werden zusammengeführt. Ratings werden
+  harmonisiert und optional einer Ausreißerbehandlung unterzogen.
+- Load: Roh- und Finalstände werden als CSV gespeichert. Zusätzlich werden
+  Validierungsberichte sowie Duplikat-/Invalid-Row-Exports erzeugt.
+
+Konfiguration (config.yaml)
+- logging: level, Formatierung; steuert die Protokollierung.
+- sources: Mapping von Adapternamen auf ihre spezifischen Pfad-/Parameterwerte.
+- processing:
+  - min_ratings_for_superscore: Mindestanzahl verfügbarer Einzelratings, damit
+    ein Superscore berechnet/gespeichert wird.
+  - apply_outlier_treatment: Globaler Schalter für Ausreißerbehandlung.
+  - outlier_treatment: Detailparameter (z. B. method, iqr_faktor,
+    lower_percentile, upper_percentile).
+- output:
+  - csv_path: Zielpfad der gemergeten Rohdaten (wird auch als Basis für finalen
+    Output verwendet, falls keine alternative Basis angegeben wird).
+  - intermediate_adapter_data_path: Verzeichnis für einzelne Adapter-Exports.
+  - save_intermediate: true/false, steuert das Speichern der Adapter-DFs.
+  - final_filtered_filename: Dateiname des final gefilterten Outputs.
+
+Nutzung
+- Ausführung als Skript (siehe if __name__ == '__main__').
+- Programmgesteuert: Instanziierung der Klasse ETLPipeline mit entsprechendem
+  config_filename und Aufruf von run().
+
+Hinweise zur Reproduzierbarkeit
+- Pfade aus der Konfiguration werden relativ zum Skriptverzeichnis aufgelöst,
+  sofern sie nicht absolut sind.
+- Der Validator schreibt Berichte in `data/validation_reports/`.
+- Duplikate (title, year) werden pro Adapter protokolliert und entfernt.
+"""
+
 import yaml
 import logging
 from pathlib import Path
@@ -23,13 +68,30 @@ class ETLPipeline:
     """
     Orchestriert den gesamten ETL-Prozess von der Datenextraktion über die
     Transformation bis hin zum Laden der verarbeiteten Daten.
+
+    Verantwortlichkeiten
+    - Einlesen der YAML-Konfiguration und Initialisierung des Loggings
+    - Ausführen aller konfigurierten Adapter (Extract + erste Transformationsschritte)
+    - Zusammenführen der Adapterdaten und Validierung (Transform)
+    - Normalisierung von Ratings, Berechnung der Superscores und finales Filtern
+    - Persistenz der Roh- und Finaldaten sowie der Validierungsartefakte (Load)
+
+    Parameter
+    - config_filename: Dateiname der YAML-Konfiguration relativ zum Skript.
+
+    Hinweise
+    - Die Klasse ist zustandsarm. Pfadauflösungen erfolgen zentral über
+      `_resolve_path`.
+    - Fehler werden protokolliert; die Pipeline bricht kontrolliert ab, wenn
+      notwendige Vorbedingungen fehlen (z. B. keine Daten geladen / Merge leer).
     """
 
     def __init__(self, config_filename: str = 'config.yaml'):
         """
         Initialisiert die ETL-Pipeline.
 
-        Liest die Konfigurationsdatei ein und initialisiert das Logging.
+        Liest die Konfigurationsdatei ein, setzt das Logging gemäß Konfiguration
+        und bereitet Verzeichnisse für Validierungsreports vor.
 
         Args:
             config_filename: Der Dateiname der YAML-Konfigurationsdatei,
@@ -43,8 +105,6 @@ class ETLPipeline:
         config_path: Path = self.script_dir / config_filename
 
         if not config_path.exists():
-            # Loggen bevor eine Exception geworfen wird, kann manchmal hilfreich sein,
-            # hier ist es aber durch FileNotFoundError schon recht klar.
             raise FileNotFoundError(
                 f"Konfigurationsdatei nicht gefunden: {config_path}")
 
@@ -58,7 +118,7 @@ class ETLPipeline:
             logging.error(
                 f"Fehler beim Parsen der Konfigurationsdatei {config_path}: {e}"
             )
-            raise  # Die Exception weiterwerfen, da die Pipeline ohne Config nicht arbeiten kann
+            raise 
 
         if self.config is None:  # yaml.safe_load kann None zurückgeben bei leerer Datei
             self.config = {}
@@ -114,6 +174,21 @@ class ETLPipeline:
         return (self.script_dir / path_obj).resolve()
 
     def _extract_and_transform_sources(self) -> dict[str, pd.DataFrame]:
+        """
+        Führt alle in der Konfiguration definierten Adapter aus.
+
+        Schritte je Adapter
+        - Instanziierung mit vorverarbeiteten Pfaden (relative → absolute Pfade)
+        - extract(): Rohdaten einlesen
+        - transform(): Adapter-spezifische Bereinigung/Normalisierung
+        - Validierung: grundlegende Schema-/Inhaltsprüfungen; Invalid Rows werden
+          protokolliert
+        - Duplikatbehandlung: nur eine Zeile pro (title, year) behalten, weitere
+          entfernen und separat protokollieren
+
+        Returns:
+            Dictionary von Adapternamen auf deren bereinigte DataFrames.
+        """
         dfs_collection: dict[str, pd.DataFrame] = {}
         adapter_classes_map: dict[str, type[ImdbAdapter | MovielensAdapter |
                                             MetacriticAdapter |
@@ -142,6 +217,7 @@ class ETLPipeline:
                 )
                 continue
 
+            # Pfade aus YAML in absolute Pfade überführen, nur für Keys mit *_path/_paths
             processed_adapter_config = {
                 key: (
                     self._resolve_path(value) if isinstance(value,
@@ -212,8 +288,12 @@ class ETLPipeline:
     def _save_intermediate_dfs(self,
                                dfs_collection: dict[str, pd.DataFrame]) -> None:
         """
-        Speichert die DataFrames der einzelnen Adapter als CSV-Dateien
-        in einem konfigurierten Zwischenverzeichnis.
+        Speichert die DataFrames der einzelnen Adapter als CSV-Dateien in einem
+        konfigurierten Zwischenverzeichnis.
+
+        Voraussetzung: `output.save_intermediate` ist true (Default true). Die
+        Ausgabe dient der Nachvollziehbarkeit und erleichtert Debugging sowie
+        Vergleich von Teilständen.
 
         Args:
             dfs_collection: Ein Dictionary mit Adapternamen als Schlüssel und
@@ -244,7 +324,6 @@ class ETLPipeline:
             self.logger.error(
                 f"Fehler beim Erstellen des Verzeichnisses {intermediate_output_dir}: {e}",
                 exc_info=True)
-            # Wenn das Verzeichnis nicht erstellt werden kann, ist ein Speichern nicht möglich.
             return
 
         for name, df_adapter in dfs_collection.items():
@@ -268,6 +347,13 @@ class ETLPipeline:
         """
         Führt eine Liste von DataFrames zusammen und speichert das rohe,
         ungesäuberte Ergebnis als CSV-Datei.
+
+        Schritte
+        - Mergen über `merge_sources`
+        - Typkonvertierung aller rating_*-Spalten auf numerische, nullable
+          Floats (Stringwerte werden zu NaN coerct)
+        - Validierung des gemergeten DataFrames
+        - Optionales Speichern des Roh-Merge-Outputs (output.csv_path)
 
         Args:
             dfs_list: Eine Liste von Pandas DataFrames, die zusammengeführt werden sollen.
@@ -344,6 +430,15 @@ class ETLPipeline:
         """
         Normalisiert Ratings, berechnet Superscores basierend auf der Konfiguration
         und speichert das finale, gefilterte Ergebnis als CSV-Datei.
+
+        Details
+        - Die Ausreißerbehandlung kann global deaktiviert werden
+          (`processing.apply_outlier_treatment = false`).
+        - Parameter für die Ausreißerbehandlung werden aus `processing.outlier_treatment`
+          übernommen, sofern vorhanden; ansonsten gelten Standardwerte der
+          Normalisierungsfunktion.
+        - Es wird nur gespeichert, was mindestens `min_ratings_for_superscore`
+          Einzelratings besitzt (Filterung über `num_available_ratings`).
 
         Args:
             merged_df: Das zusammengeführte DataFrame, das verarbeitet werden soll.
@@ -524,6 +619,7 @@ class ETLPipeline:
 
 
 if __name__ == '__main__':
-    # Initialisiert und startet die Pipeline
+    # Initialisiert und startet die Pipeline. Für reproduzierbare Ergebnisse
+    # sollte die Konfiguration (Pfad-/Parameterwerte) versioniert vorliegen.
     pipeline = ETLPipeline(config_filename='config.yaml')
     pipeline.run()

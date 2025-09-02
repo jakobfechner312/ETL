@@ -14,7 +14,7 @@ class MetacriticAdapter(BaseAdapter):
     def extract(self) -> pd.DataFrame: 
         return pd.read_csv(self.config["file_path"], on_bad_lines="skip")
 
-    def transform(self, df: pd.DataFrame) -> pd.DataFrame:  # type: ignore[override]
+    def transform(self, df: pd.DataFrame) -> pd.DataFrame:  
         df = df.copy()
         src_path = Path(self.config["file_path"])
         # Stabile zeilenbasierte ID

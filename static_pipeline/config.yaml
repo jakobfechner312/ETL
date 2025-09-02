@@ -3,14 +3,14 @@ logging:
 
 sources:
   ImdbAdapter:
-    file_path: '../static_pipeline/data/raw/imdb_data.csv'
+    file_path: 'data/raw/imdb_data.csv'
   MetacriticAdapter:
-    file_path: '../static_pipeline/data/raw/metacritic_movies.csv'
+    file_path: 'data/raw/metacritic_movies.csv'
   MovielensAdapter:
     # Nutzen Sie eine bereits aggregierte Datei, um Verarbeitung zu vereinfachen
-    file_path: '../static_pipeline/data/raw/movielens_aggregated.csv'
+    file_path: 'data/raw/movielens_aggregated.csv'
   RottenTomatoesAdapter:
-    file_path: '../static_pipeline/data/raw/rotten_tomatoes_movies.csv'
+    file_path: 'data/raw/rotten_tomatoes_movies.csv'
 
 processing:
   min_ratings_for_superscore: 2
@@ -24,7 +24,8 @@ processing:
     upper_percentile: 0.95
     
 output:
-  csv_path: '../static_pipeline/data/processed/test_merge_result.csv'
+  csv_path: 'data/processed/test_merge_result.csv'
+  intermediate_adapter_data_path: 'data/intermediate_adapter_outputs'
 
   analysis: 
     analysis_report_path: "data/analysis_reports/comprehensive_movie_merge_report.txt"
@@ -33,5 +34,5 @@ output:
 
 
 aux_output_dirs:
-  invalid: "../static_pipeline/data/intermediate_adapter_outputs/invalid"
-  duplicates: "../static_pipeline/data/intermediate_adapter_outputs/duplicates"
+  invalid: "data/intermediate_adapter_outputs/invalid"
+  duplicates: "data/intermediate_adapter_outputs/duplicates"
