@@ -14,6 +14,7 @@
 !README.md
 !requirements.txt
 !.env.example
+!evaluate.ipynb
 
 # System/Cache
 .DS_Store
